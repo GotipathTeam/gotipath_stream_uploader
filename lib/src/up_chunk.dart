@@ -1,12 +1,10 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:mime/mime.dart';
 import 'package:http/http.dart' as http;
-import '../gotipath_uploader.dart';
 import 'connection_status_singleton.dart';
+import 'uploader_repository.dart';
 
 
 class GotipathUploader {
@@ -100,8 +98,10 @@ class GotipathUploader {
 
 
 
-    videoUploadRequest()
+    videoUploadRequest(endPoint: endPoint, clientID: clientID, libraryID: libraryID, apiKey: apiKey, filename: file!.path.split('/').last, videoID: videoID)
       .then((value) async {
+        upload_id=value['uploadId'];
+        upload_key=value['key'];
         _fileSize = await file!.length();
         _totalChunks =  (_fileSize / chunkByteSize).ceil();
 
@@ -186,99 +186,9 @@ class GotipathUploader {
   // }
 
 
-  Future<void> videoUploadRequest() async {
-    final String url = endPoint! + 'uploads/s3/multipart';
-    final client = new http.Client();
-
-    Map<String,dynamic> body={
-      "filename": file!.path.split(Platform.pathSeparator).last,
-      "type": "video/mp4",
-      "metadata": {
-        "name": file!.path.split(Platform.pathSeparator).last,
-        "type": "video/mp4",
-        "video_id": videoID!,
-        "collection_id":"",
-        "library_id": libraryID!,
-      }
-    };
-
-    print({'Accept': 'application/json', 'Content-type': 'application/json',"X-Auth-ClientId": clientID!, "X-Auth-LibraryId": libraryID!, "X-Auth-ApiKey": apiKey! });
-    final response = await client.post(
-      Uri.parse(url),
-      headers: {'Accept': 'application/json', 'Content-type': 'application/json',"X-Auth-ClientId": clientID!, "X-Auth-LibraryId": libraryID!, "X-Auth-ApiKey": apiKey! },
-      body: json.encode(body),
-    );
-    print("This is video 1st request $url");
-    print("this is video 1st response ${response.body}");
-
-    if (response.statusCode == 200) {
-      final result=jsonDecode(response.body);
-      upload_id=result['uploadId'];
-      upload_key=result['key'];
- //     return response;
-
-    } else {
-      throw new Exception(response.body);
-    }
-  }
-
-
-  Future<http.Response> videoUploadComplete() async {
-    //   https://api.py2man.com/v1/uploads/s3/multipart/745fe213-1509-4580-87da-77b3c5d59ab2/complete?key=media%2Fb4e6ea09-c5ed-4fcb-8359-f4f186e1b35c.mp4
-    final String url = endPoint! + 'uploads/s3/multipart/';
-    final client = new http.Client();
-
-    Map<String,dynamic> body={
-      "parts": chunk_list
-    };
-
-    final response = await client.post(
-      Uri.parse(url+upload_id!+"/complete?key="+upload_key!),
-      headers: {'Accept': 'application/json', 'Content-type': 'application/json', "X-Auth-ClientId": clientID!, "X-Auth-LibraryId": libraryID!, "X-Auth-ApiKey": apiKey! },
-      body: jsonEncode(body),
-    );
-    print("This is video upload complete request ${url+upload_id!+"/complete?key="+upload_key!}");
-    print("This is video upload complete body ${json.encode(body)}");
-    print("this is video upload complete response ${response.body}");
-
-    if (response.statusCode == 200) {
-      return response;
-    } else {
-
-      throw new Exception(response.body);
-    }
-  }
 
 
 
-  Future<String> uploadUrlRequest(String index) async {
-    final String url = endPoint! + 'uploads/s3/multipart/';
-    final client = new http.Client();
-
-    try{
-      final response = await client.get(
-        Uri.parse(url+upload_id!+"/"+index+"?key="+upload_key!),
-        headers: {'Accept': 'application/json', 'Content-type': 'application/json', "X-Auth-ClientId": clientID!, "X-Auth-LibraryId": libraryID!, "X-Auth-ApiKey": apiKey! },
-      );
-      print("This is video upload url request ${url+upload_id!+"/"+index+"?key="+upload_key!}");
-      print("this is video upload url response ${response.body}");
-
-      // if(response==null)
-      //   return "";
-
-      if (response.statusCode == 200) {
-        return jsonDecode(response.body)['url'];
-
-      } else {
-        return "";
-        // throw new Exception(response.body);
-      }
-    }catch(e){
-      print("this is video upload url error ${e}");
-      return "";
-    }
-
-  }
 
 
 
@@ -405,7 +315,7 @@ class GotipathUploader {
     if (_paused || _offline || _stopped)
       return;
 
-   final presigned_url=await uploadUrlRequest((_chunkCount+1).toString());
+   final presigned_url=await uploadUrlRequest(index: (_chunkCount+1).toString(), upload_id: upload_id, upload_key: upload_key, endPoint: endPoint, clientID: clientID, libraryID: libraryID, apiKey: apiKey );
    if(presigned_url!=""){
      await  _getChunk();
      await _sendChunk(presigned_url,_chunkLength).then((res) async{
@@ -418,7 +328,7 @@ class GotipathUploader {
            _attemptCount = 0;
            _sendChunks();
          } else {
-           final result=await videoUploadComplete();
+           final result=await videoUploadComplete(endPoint: endPoint, clientID: clientID, libraryID: libraryID, apiKey: apiKey, upload_id: upload_id, upload_key: upload_key, chunk_list: chunk_list);
            if (onSuccess != null && result.statusCode==200) onSuccess!();
          }
 
