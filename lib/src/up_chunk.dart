@@ -37,15 +37,15 @@ class GotipathUploader {
   Future<String>? endPointResolver;
   File? file;
 //  Map<String, String> headers = {};
-  int chunkSize = 0;
-  int attempts = 0;
-  int delayBeforeAttempt = 0;
+  int chunkSize = 5120;
+  int attempts = 5;
+  int delayBeforeAttempt = 1;
 
   Stream<List<int>> _chunk = Stream.empty();
   int _chunkLength = 0;
   int _fileSize = 0;
   int _chunkCount = 0;
-  int _chunkByteSize = 0;
+  int chunkByteSize = 0;
   String? _fileMimeType;
   Uri _endpointValue = Uri();
   int _totalChunks = 0;
@@ -58,52 +58,52 @@ class GotipathUploader {
 
   bool _uploadFailed = false;
 
-  void Function()? _onOnline;
-  void Function()? _onOffline;
-  void Function(int chunkNumber, int chunkSize)? _onAttempt;
-  void Function(String message, int chunkNumber, int attemptsLeft)? _onAttemptFailure;
-  void Function(String message, int chunk, int attempts)? _onError;
-  void Function()? _onSuccess;
-  void Function(double progress )? _onProgress;
+  void Function()? onOnline;
+  void Function()? onOffline;
+  void Function(int chunkNumber, int chunkSize)? onAttempt;
+  void Function(String message, int chunkNumber, int attemptsLeft)? onAttemptFailure;
+  void Function(String message, int chunk, int attempts)? onError;
+  void Function()? onSuccess;
+  void Function(double progress )? onProgress;
 
   GotipathUploader();
 
-   GotipathUploader createUpload(UpChunkOptions options) => GotipathUploader._internal(options);
+   createUpload() => _internal();
 
   /// Internal constructor used by [createUpload]
-  GotipathUploader._internal(UpChunkOptions options) {
-    endPoint = options.endPoint;
-    endPointResolver = options.endPointResolver;
-    file = options.file;
-    //headers = options.headers;
-    chunkSize = options.chunkSize;
-    attempts = options.attempts;
-    delayBeforeAttempt = options.delayBeforeAttempt;
-    clientID=options.clientID;
-    libraryID=options.libraryID;
-    apiKey=options.apiKey;
-    videoID=options.videoID;
-    collectionID=options.collectionID;
+  _internal() {
+    // endPoint = options.endPoint;
+    // endPointResolver = options.endPointResolver;
+    // file = options.file;
+    // //headers = options.headers;
+    // chunkSize = options.chunkSize;
+    // attempts = options.attempts;
+    // delayBeforeAttempt = options.delayBeforeAttempt;
+    // clientID=options.clientID;
+    // libraryID=options.libraryID;
+    // apiKey=options.apiKey;
+    // videoID=options.videoID;
+    // collectionID=options.collectionID;
 
 
 
     _validateOptions();
 
-    _chunkByteSize = chunkSize * 1024;
-    _onOnline = options.onOnline;
-    _onOffline = options.onOffline;
-    _onAttempt = options.onAttempt;
-    _onAttemptFailure = options.onAttemptFailure;
-    _onError = options.onError;
-    _onSuccess = options.onSuccess;
-    _onProgress = options.onProgress;
+    chunkByteSize = chunkSize * 1024;
+    // onOnline = options.onOnline;
+    // onOffline = options.onOffline;
+    // onAttempt = options.onAttempt;
+    // onAttemptFailure = options.onAttemptFailure;
+    // onError = options.onError;
+    // onSuccess = options.onSuccess;
+    // onProgress = options.onProgress;
 
 
 
     videoUploadRequest()
       .then((value) async {
-        _fileSize = await options.file!.length();
-        _totalChunks =  (_fileSize / _chunkByteSize).ceil();
+        _fileSize = await file!.length();
+        _totalChunks =  (_fileSize / chunkByteSize).ceil();
 
         await _getMimeType();
       })
@@ -111,7 +111,9 @@ class GotipathUploader {
 
     // restart sync when back online
     // trigger events when offline/back online
-    ConnectionStatusSingleton connectionStatus = ConnectionStatusSingleton.getInstance();
+    ConnectionStatusSingleton connectionStatus = ConnectionStatusSingleton();
+
+
     connectionStatus.connectionChange.listen(_connectionChanged);
   }
 
@@ -133,8 +135,8 @@ class GotipathUploader {
     _uploadFailed = true;
     _currentCancelToken!.cancel(Exception('Upload cancelled by the user'));
 
-    if (_onError != null)
-      _onError!(
+    if (onError != null)
+      onError!(
         'Upload cancelled by the user.',
         _chunkCount,
         _attemptCount,
@@ -253,19 +255,29 @@ class GotipathUploader {
     final String url = endPoint! + 'uploads/s3/multipart/';
     final client = new http.Client();
 
-    final response = await client.get(
-      Uri.parse(url+upload_id!+"/"+index+"?key="+upload_key!),
-      headers: {'Accept': 'application/json', 'Content-type': 'application/json', "X-Auth-ClientId": clientID!, "X-Auth-LibraryId": libraryID!, "X-Auth-ApiKey": apiKey! },
-    );
-    print("This is video upload url request ${url+upload_id!+"/"+index+"?key="+upload_key!}");
-    print("this is video upload url response ${response.body}");
+    try{
+      final response = await client.get(
+        Uri.parse(url+upload_id!+"/"+index+"?key="+upload_key!),
+        headers: {'Accept': 'application/json', 'Content-type': 'application/json', "X-Auth-ClientId": clientID!, "X-Auth-LibraryId": libraryID!, "X-Auth-ApiKey": apiKey! },
+      );
+      print("This is video upload url request ${url+upload_id!+"/"+index+"?key="+upload_key!}");
+      print("this is video upload url response ${response.body}");
 
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body)['url'];
+      // if(response==null)
+      //   return "";
 
-    } else {
-      throw new Exception(response.body);
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body)['url'];
+
+      } else {
+        return "";
+        // throw new Exception(response.body);
+      }
+    }catch(e){
+      print("this is video upload url error ${e}");
+      return "";
     }
+
   }
 
 
@@ -277,13 +289,14 @@ class GotipathUploader {
   /// if the connection drops [_offline] is marked as true and upload us paused,
   /// if connection is restore [_offline] is marked as false and resumes the upload
   _connectionChanged(dynamic hasConnection) {
+    print("this is connection changed called");
     if (hasConnection) {
       if (!_offline)
         return;
 
       _offline = false;
 
-      if (_onOnline != null) _onOnline!();
+      if (onOnline != null) onOnline!();
 
       _sendChunks();
     }
@@ -291,7 +304,7 @@ class GotipathUploader {
     if (!hasConnection) {
       _offline = true;
 
-      if (_onOffline != null) _onOffline!();
+      if (onOffline != null) onOffline!();
     }
   }
 
@@ -299,7 +312,7 @@ class GotipathUploader {
   Future<Response> _sendChunk(String presignedUrl,int chunkLenght) async {
   //  print("this is presigned url $presignedUrl");
     // add chunk request headers
-    // var rangeStart = _chunkCount * _chunkByteSize;
+    // var rangeStart = _chunkCount * chunkByteSize;
     // var rangeEnd = rangeStart + _chunkLength - 1;
 
     var putHeaders =  {"Accept":"*/*","Content-Length": chunkLenght, "Content-Type": "binary/octet-stream"};
@@ -313,12 +326,12 @@ class GotipathUploader {
     // }
     // headers.forEach((key, value) => putHeaders.putIfAbsent(key, () => value));
 
-    if (_onAttempt != null)
-      _onAttempt!(_chunkCount, _chunkLength);
+    if (onAttempt != null)
+      onAttempt!(_chunkCount, _chunkLength);
 
     _currentCancelToken = CancelToken();
 
-   // Response<Response> response =await http.put(Uri.parse(presignedUrl), body: _chunk, headers: {"Accept":"*/*","Content-Length": _chunkByteSize.toString()});
+   // Response<Response> response =await http.put(Uri.parse(presignedUrl), body: _chunk, headers: {"Accept":"*/*","Content-Length": chunkByteSize.toString()});
 
     final response=await Dio().request(
       presignedUrl,
@@ -333,12 +346,12 @@ class GotipathUploader {
       ),
       data: _chunk,
       onSendProgress: (int sent, int total) {
-        if (_onProgress != null) {
-          final bytesSent = _chunkCount * _chunkByteSize;
+        if (onProgress != null) {
+          final bytesSent = _chunkCount * chunkByteSize;
           final percentProgress = (bytesSent + sent) * 100.0 / _fileSize;
 
           if (percentProgress < 100.0)
-            _onProgress!(percentProgress);
+            onProgress!(percentProgress);
         }
       },
       cancelToken: _currentCancelToken,
@@ -348,9 +361,9 @@ class GotipathUploader {
     return response;
   }
 
-  /// Gets [_chunk] and [_chunkLength] for the portion of the file of x bytes corresponding to [_chunkByteSize]
+  /// Gets [_chunk] and [_chunkLength] for the portion of the file of x bytes corresponding to [chunkByteSize]
   _getChunk() {
-    final length = _totalChunks == 1 ? _fileSize : _chunkByteSize;
+    final length = _totalChunks == 1 ? _fileSize : chunkByteSize;
     final start = length * _chunkCount;
 
     _chunk = file!.openRead(start, start + length);
@@ -366,8 +379,8 @@ class GotipathUploader {
       _attemptCount = _attemptCount + 1;
       Timer(Duration(seconds: delayBeforeAttempt), () => _sendChunks());
 
-      if (_onAttemptFailure != null)
-        _onAttemptFailure!(
+      if (onAttemptFailure != null)
+        onAttemptFailure!(
           'An error occurred uploading chunk $_chunkCount. ${attempts - _attemptCount} retries left.',
           _chunkCount,
           attempts - _attemptCount,
@@ -378,8 +391,8 @@ class GotipathUploader {
 
     _uploadFailed = true;
 
-    if (_onError != null)
-      _onError!(
+    if (onError != null)
+      onError!(
         'An error occurred uploading chunk $_chunkCount. No more retries, stopping upload',
         _chunkCount,
         _attemptCount,
@@ -388,63 +401,66 @@ class GotipathUploader {
 
   /// Manages the whole upload by calling [_getChunk] and [_sendChunk]
   _sendChunks() async{
-    print("called send chunks");
+    print("called send chunks $_paused");
     if (_paused || _offline || _stopped)
       return;
 
    final presigned_url=await uploadUrlRequest((_chunkCount+1).toString());
-    await  _getChunk();
-   await _sendChunk(presigned_url,_chunkLength).then((res) async{
-        if (successfulChunkUploadCodes.contains(res.statusCode)) {
-          print("this is response header ${res.headers}");
-          print({"PartNumber":  _chunkCount+1, "ETag": res.headers.map['etag']!.toList().first});
-          chunk_list.add({"PartNumber":  _chunkCount+1, "ETag": res.headers.map['etag']!.toList().first});
-          _chunkCount++;
-          if (_chunkCount < _totalChunks) {
-            _attemptCount = 0;
-            _sendChunks();
-          } else {
-            final result=await videoUploadComplete();
-            if (_onSuccess != null && result.statusCode==200) _onSuccess!();
-          }
+   if(presigned_url!=""){
+     await  _getChunk();
+     await _sendChunk(presigned_url,_chunkLength).then((res) async{
+       if (successfulChunkUploadCodes.contains(res.statusCode)) {
 
-          if (_onProgress != null) {
-            double percentProgress = 100.0;
-            if (_chunkCount < _totalChunks) {
-              final bytesSent = _chunkCount * _chunkByteSize;
-              percentProgress = bytesSent * 100.0 / _fileSize;
-            }
-            _onProgress!(percentProgress);
-          }
-        }
-        else if (temporaryErrorCodes.contains(res.statusCode)) {
-          if (_paused || _offline || _stopped)
-            return;
+         print({"PartNumber":  _chunkCount+1, "ETag": res.headers.map['etag']!.toList().first});
+         chunk_list.add({"PartNumber":  _chunkCount+1, "ETag": res.headers.map['etag']!.toList().first});
+         _chunkCount++;
+         if (_chunkCount < _totalChunks) {
+           _attemptCount = 0;
+           _sendChunks();
+         } else {
+           final result=await videoUploadComplete();
+           if (onSuccess != null && result.statusCode==200) onSuccess!();
+         }
 
-          _manageRetries();
-        }
-        else {
-          if (_paused || _offline || _stopped)
-            return;
+         if (onProgress != null) {
+           double percentProgress = 100.0;
+           if (_chunkCount < _totalChunks) {
+             final bytesSent = _chunkCount * chunkByteSize;
+             percentProgress = bytesSent * 100.0 / _fileSize;
+           }
+           onProgress!(percentProgress);
+         }
+       }
+       else if (temporaryErrorCodes.contains(res.statusCode)) {
+         if (_paused || _offline || _stopped)
+           return;
 
-          _uploadFailed = true;
+         _manageRetries();
+       }
+       else {
+         if (_paused || _offline || _stopped)
+           return;
 
-          if (_onError != null)
-            _onError!(
-              'Server responded with ${res.statusCode}. Stopping upload.',
-              _chunkCount,
-              _attemptCount,
-            );
-        }
-      },
-      onError: (err) {
-        if (_paused || _offline || _stopped)
-          return;
+         _uploadFailed = true;
 
-        // this type of error can happen after network disconnection on CORS setup
-        _manageRetries();
-      }
-    );
+         if (onError != null)
+           onError!(
+             'Server responded with ${res.statusCode}. Stopping upload.',
+             _chunkCount,
+             _attemptCount,
+           );
+       }
+     },
+         onError: (err) {
+           if (_paused || _offline || _stopped)
+             return;
+
+           // this type of error can happen after network disconnection on CORS setup
+           _manageRetries();
+         }
+     );
+   }
+
   }
 
   /// Restarts the upload after if the upload failed and came to a complete stop
@@ -453,7 +469,7 @@ class GotipathUploader {
       throw Exception('Upload hasn\'t yet failed, please use restart only after all retries have failed.');
 
     _chunkCount = 0;
-    _chunkByteSize = chunkSize * 1024;
+    chunkByteSize = chunkSize * 1024;
     _attemptCount = 0;
     _currentCancelToken = null;
 
