@@ -66,7 +66,9 @@ class GotipathUploader {
   void Function()? _onSuccess;
   void Function(double progress )? _onProgress;
 
-  static GotipathUploader createUpload(UpChunkOptions options) => GotipathUploader._internal(options);
+  GotipathUploader();
+
+   GotipathUploader createUpload(UpChunkOptions options) => GotipathUploader._internal(options);
 
   /// Internal constructor used by [createUpload]
   GotipathUploader._internal(UpChunkOptions options) {
@@ -114,7 +116,9 @@ class GotipathUploader {
   }
 
   /// It pauses the upload, the [_chunk] currently being uploaded will finish first before pausing the next [_chunk]
-  pause() => _paused = true;
+   pause() => _paused = true;
+
+
 
   /// It resumes the upload for the next [_chunk]
   resume() {
@@ -185,10 +189,10 @@ class GotipathUploader {
     final client = new http.Client();
 
     Map<String,dynamic> body={
-      "filename": "Flussonic.mp4",
+      "filename": file!.path.split(Platform.pathSeparator).last,
       "type": "video/mp4",
       "metadata": {
-        "name": "Flussonic.mp4",
+        "name": file!.path.split(Platform.pathSeparator).last,
         "type": "video/mp4",
         "video_id": videoID!,
         "collection_id":"",
@@ -388,12 +392,13 @@ class GotipathUploader {
     if (_paused || _offline || _stopped)
       return;
 
-   final presigned_url=await uploadUrlRequest(_chunkCount.toString());
+   final presigned_url=await uploadUrlRequest((_chunkCount+1).toString());
     await  _getChunk();
-   await _sendChunk(presigned_url,_chunkByteSize).then((res) async{
+   await _sendChunk(presigned_url,_chunkLength).then((res) async{
         if (successfulChunkUploadCodes.contains(res.statusCode)) {
-          print("the chunk count $_chunkCount");
-          chunk_list.add({"PartNumber":  _chunkCount, "ETag": res.headers['etag'].toString()});
+          print("this is response header ${res.headers}");
+          print({"PartNumber":  _chunkCount+1, "ETag": res.headers.map['etag']!.toList().first});
+          chunk_list.add({"PartNumber":  _chunkCount+1, "ETag": res.headers.map['etag']!.toList().first});
           _chunkCount++;
           if (_chunkCount < _totalChunks) {
             _attemptCount = 0;

@@ -39,7 +39,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final String _clientID = 'f926cca1-ff63-4aa6-97e0-31ea7f0952ad';
   final String _libraryID = '7463b6ab-c36f-4e4e-bf43-41c84f0ac6e8';
   final String _apiKey = '9XyCA1Am23luZhT6VYLrWYevKOM3UKQhwnZ+5xwHKCSIIdEHRJVVzY+5854XMd5U/OxN3g';
-  final String _videoID = '080c2439-2f21-45dd-9998-1691a197864a';
+  final String _videoID = '3d1607a2-86ee-4836-a221-7f5d53d465e4';
 
   final picker = ImagePicker();
 
@@ -48,6 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String _errorMessage = '';
 
   String fileToUpload = '';
+  GotipathUploader gotipathUploader = GotipathUploader();
 
   void _getFile() async {
     final pickedFile = await picker.pickVideo(source: ImageSource.gallery);
@@ -93,7 +94,9 @@ class _MyHomePageState extends State<MyHomePage> {
         });
       };
 
-    GotipathUploader.createUpload(uploadOptions);
+
+
+    gotipathUploader.createUpload(uploadOptions);
   }
 
   @override
@@ -141,11 +144,53 @@ class _MyHomePageState extends State<MyHomePage> {
               },
               child: Container(
                 width: 200,
-                height: 200,
+                height: 50,
                 color: Colors.grey,
                 child: Center(
                   child: Text(
                     'Video upload',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.normal,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 30),
+            InkWell(
+              onTap: (){
+                gotipathUploader.pause();
+              },
+              child: Container(
+                width: 200,
+                height: 50,
+                color: Colors.blue,
+                child: Center(
+                  child: Text(
+                    'Upload Pause',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.normal,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 30),
+            InkWell(
+              onTap: (){
+                gotipathUploader.resume();
+              },
+              child: Container(
+                width: 200,
+                height: 50,
+                color: Colors.blue,
+                child: Center(
+                  child: Text(
+                    'Upload Resume',
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.normal,
