@@ -70,31 +70,11 @@ class GotipathUploader {
 
   /// Internal constructor used by [createUpload]
   _internal() {
-    // endPoint = options.endPoint;
-    // endPointResolver = options.endPointResolver;
-    // file = options.file;
-    // //headers = options.headers;
-    // chunkSize = options.chunkSize;
-    // attempts = options.attempts;
-    // delayBeforeAttempt = options.delayBeforeAttempt;
-    // clientID=options.clientID;
-    // libraryID=options.libraryID;
-    // apiKey=options.apiKey;
-    // videoID=options.videoID;
-    // collectionID=options.collectionID;
-
 
 
     _validateOptions();
 
     chunkByteSize = chunkSize * 1024;
-    // onOnline = options.onOnline;
-    // onOffline = options.onOffline;
-    // onAttempt = options.onAttempt;
-    // onAttemptFailure = options.onAttemptFailure;
-    // onError = options.onError;
-    // onSuccess = options.onSuccess;
-    // onProgress = options.onProgress;
 
 
 
@@ -170,27 +150,6 @@ class GotipathUploader {
       throw new Exception('delayBeforeAttempt must be a positive number');
   }
 
-  /// Gets a value for [_endpointValue]
-  ///
-  /// If [endPoint] is provided it converts it to a Uri and returns the value,
-  /// otherwise it uses [endPointResolver] to resolve the Uri value to return
-  // Future<Uri> _getEndpoint() async {
-  //   if (endPoint != null) {
-  //     _endpointValue = Uri.parse(endPoint!);
-  //     return _endpointValue;
-  //   }
-  //
-  //   endPoint = await endPointResolver;
-  //   _endpointValue = Uri.parse(endPoint!);
-  //   return _endpointValue;
-  // }
-
-
-
-
-
-
-
 
 
 
@@ -220,10 +179,6 @@ class GotipathUploader {
 
   /// Sends [_chunk] of the file with appropriate headers
   Future<Response> _sendChunk(String presignedUrl,int chunkLenght) async {
-  //  print("this is presigned url $presignedUrl");
-    // add chunk request headers
-    // var rangeStart = _chunkCount * chunkByteSize;
-    // var rangeEnd = rangeStart + _chunkLength - 1;
 
     var putHeaders =  {"Accept":"*/*","Content-Length": chunkLenght, "Content-Type": "binary/octet-stream"};
 

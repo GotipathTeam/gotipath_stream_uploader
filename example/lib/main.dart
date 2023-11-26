@@ -67,33 +67,6 @@ class _MyHomePageState extends State<MyHomePage> {
     _uploadComplete = false;
     _errorMessage = '';
 
-    // Chunk upload
-    // var uploadOptions = UpChunkOptions()
-    //   ..endPoint = _endPoint
-    //   ..clientID = _clientID
-    //   ..libraryID = _libraryID
-    //   ..apiKey= _apiKey
-    //   ..videoID = _videoID
-    //   ..file = fileToUpload
-    //   ..onProgress = (double progress) {
-    //     setState(() {
-    //       _progress = progress.ceil();
-    //     });
-    //   }
-    //   ..onError = (String message, int chunk, int attempts) {
-    //     setState(() {
-    //       _errorMessage = 'UpChunk error 💥 🙀:\n'
-    //           ' - Message: $message\n'
-    //           ' - Chunk: $chunk\n'
-    //           ' - Attempts: $attempts';
-    //     });
-    //   }
-    //   ..onSuccess = () {
-    //     setState(() {
-    //       _uploadComplete = true;
-    //     });
-    //   };
-
     gotipathUploader
       ..endPoint = _endPoint
       ..clientID = _clientID
