@@ -5,11 +5,17 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 
 class ConnectionStatusSingleton {
   /// Creates the single instance by calling the `_internal` constructor specified below
-  static final ConnectionStatusSingleton _singleton = new ConnectionStatusSingleton._internal();
-  ConnectionStatusSingleton._internal();
+  // static final ConnectionStatusSingleton _singleton = new ConnectionStatusSingleton._internal();
+  // ConnectionStatusSingleton._internal();
+  //
+  //
+  //
+  // /// Retrieves the singleton instance
+  // static ConnectionStatusSingleton getInstance() => _singleton;
 
-  /// Retrieves the singleton instance
-  static ConnectionStatusSingleton getInstance() => _singleton;
+  ConnectionStatusSingleton() {
+    initialize();
+  }
 
   /// Tracks the current connection status
   bool hasConnection = false;
@@ -47,10 +53,12 @@ class ConnectionStatusSingleton {
 
   /// Tests to verify if there's indeed connected to the internet
   Future<bool> checkConnection() async {
+
     bool previousConnection = hasConnection;
 
     try {
       final result = await InternetAddress.lookup('google.com');
+
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
         hasConnection = true;
       } else {
@@ -64,7 +72,7 @@ class ConnectionStatusSingleton {
     if (previousConnection != hasConnection) {
       connectionChangeController.add(hasConnection);
     }
-
+    print("this is checkConnection result: $hasConnection");
     return hasConnection;
   }
 }
