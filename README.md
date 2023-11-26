@@ -5,7 +5,7 @@ Gotipath Uploader is a simple port of the JS library https://uppy.io
 ## Installation
 
 Add the package to the `dependencies` section in `pubspec.yaml`:
-- `gotipath_uploader: ^1.5.0` (or latest release)
+- `gotipath_uploader: ^1.0.0` (or latest release)
 
 ## Usage
 
