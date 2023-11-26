@@ -1,4 +1,4 @@
-# Gotipath Uploader
+# Gotipath Stream Uploader
 
 Gotipath Uploader is a simple port of the JS library https://uppy.io
 
