@@ -12,7 +12,6 @@ Future<http.Response> videoUploadComplete(
     String? upload_key,
     String? upload_id,
     List<Map<String, dynamic>>? chunk_list}) async {
-  //   https://api.py2man.com/v1/uploads/s3/multipart/745fe213-1509-4580-87da-77b3c5d59ab2/complete?key=media%2Fb4e6ea09-c5ed-4fcb-8359-f4f186e1b35c.mp4
   final String url = endPoint! + 'uploads/s3/multipart/';
   final client = new http.Client();
 
