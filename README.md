@@ -5,7 +5,7 @@ Gotipath Uploader is a simple port of the JS library https://uppy.io
 ## Installation
 
 Add the package to the `dependencies` section in `pubspec.yaml`:
-- `flutter_upchunk: ^1.5.0` (or latest release)
+- `gotipath_uploader: ^1.5.0` (or latest release)
 
 ## Usage
 
@@ -16,47 +16,66 @@ Add the following import to the `.dart` file that will use **UpChunk**
 ### Example
 
 ```dart
-Future<String> _getUploadUrl() {
-  String uploadUrl;
-  // Perform call either to your API or directly to MUX to retrieve the upload URL
-  // ...
-  //
+  // ADD ENDPOINT and credential HERE
+final String _endPoint = "https://apistream.gotipath.com/v1/";
+final String _clientID = 'f926cca1-ff63-4aa6-97e0-31ea7f0952ad';
+final String _libraryID = '7463b6ab-c36f-4e4e-bf43-41c84f0ac6e8';
+final String _apiKey = '9XyCA1Am23luZhT6VYLrWYevKOM3UKQhwnZ+5xwHKCSIIdEHRJVVzY+5854XMd5U/OxN3g';
+final String _videoID = '3d2e9180-f3b0-4291-adb3-bc1810446101';
 
-  return uploadUrl;
-}
+GotipathUploader gotipathUploader = GotipathUploader();
+
 
 // Chunk upload
-var uploadOptions = UpChunkOptions()
-  ..endPointResolver = _getUploadUrl()
-  ..file = File(_filePath)
-  ..onProgress = (progress) {
-    print('Upload progress: ${progress.ceil()}%');
+  gotipathUploader
+  ..endPoint = _endPoint
+  ..clientID = _clientID
+  ..libraryID = _libraryID
+  ..apiKey= _apiKey
+  ..videoID = _videoID
+  ..file = fileToUpload
+  ..onProgress = (double progress) {
+  setState(() {
+  _progress = progress.ceil();
+  });
   }
   ..onError = (String message, int chunk, int attempts) {
-    print('UpChunk error 💥 🙀:');
-    print(' - Message: $message');
-    print(' - Chunk: $chunk');
-    print(' - Attempts: $attempts');
+  setState(() {
+  _errorMessage = 'UpChunk error 💥 🙀:\n'
+  ' - Message: $message\n'
+  ' - Chunk: $chunk\n'
+  ' - Attempts: $attempts';
+  });
   }
   ..onSuccess = () {
-    print('Upload complete! 👋');
+  setState(() {
+  _uploadComplete = true;
+  });
   };
-var upChunkUpload = UpChunk.createUpload(uploadOptions);
+
+
+
+gotipathUploader.createUpload();
 ```
 
 ## API
 
 Although the API is a port of the original JS library, some options and properties differ slightly.
 
-### `createUpload(UpChunkOptions options)`
+### `createUpload()`
 
-Returns an instance of `UpChunk` and begins uploading the specified `File`.
+Intializes the upload process. This method must be called after the `GotipathUploader` instance is created and all event handlers are set.
 
-#### `UpChunkOptions` parameters:
+#### `GotipathUploader` parameters:
 
 ##### Upload options
 
 - `endPoint` <small>type: `string` (required if `endPointResolver` is `null`)</small>
+- `clientID` <small>type: `string` (required)</small>
+- `libraryID` <small>type: `string` (required)</small>
+- `apiKey` <small>type: `string` (required)</small>
+- `videoID` <small>type: `string` (required)</small>
+
 
   URL to upload the file to.
 
@@ -114,7 +133,7 @@ Returns an instance of `UpChunk` and begins uploading the specified `File`.
 
   Fired when the upload is finished successfully.
 
-### UpChunk Instance Methods
+### GotipathUploader Instance Methods
 
 - `pause()`
 
