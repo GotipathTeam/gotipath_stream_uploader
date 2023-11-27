@@ -1,7 +1,5 @@
 # Gotipath Stream Uploader
 
-Gotipath Uploader is a simple port of the JS library https://uppy.io
-
 ## Installation
 
 Add the package to the `dependencies` section in `pubspec.yaml`:
@@ -18,16 +16,16 @@ Add the following import to the `.dart` file that will use **UpChunk**
 ```dart
   // ADD ENDPOINT and credential HERE
 final String _endPoint = "https://apistream.gotipath.com/v1/";
-final String _clientID = 'f926cca1-ff63-4aa6-97e0-xxxxxxxxxx';
-final String _libraryID = '7463b6ab-c36f-4e4e-bf43-xxxxxxxx';
-final String _apiKey = '9XyCA1Am23luZhT6VYLrWYevKOM3UKQhwnZ+xxxxxxxxxx/OxN3g';
-final String _videoID = '3d2e9180-f3b0-4291-adb3-xxxxxxxx';
+final String _clientID = 'f926cca1-ff63-4aa6-97e0-31ea7f0952ad';
+final String _libraryID = '7463b6ab-c36f-4e4e-bf43-41c84f0ac6e8';
+final String _apiKey = '9XyCA1Am23luZhT6VYLrWYevKOM3UKQhwnZ+5xwHKCSIIdEHRJVVzY+5854XMd5U/OxN3g';
+final String _videoID = '3d2e9180-f3b0-4291-adb3-bc1810446101';
 
-GotipathStreamUploader GotipathStreamUploader = GotipathStreamUploader();
+GotipathStreamUploader gotipathStreamUploader = GotipathStreamUploader();
 
 
 // Chunk upload
-  GotipathStreamUploader
+gotipathStreamUploader
   ..endPoint = _endPoint
   ..clientID = _clientID
   ..libraryID = _libraryID
@@ -41,7 +39,7 @@ GotipathStreamUploader GotipathStreamUploader = GotipathStreamUploader();
   }
   ..onError = (String message, int chunk, int attempts) {
   setState(() {
-  _errorMessage = 'UpChunk error 💥 🙀:\n'
+  _errorMessage = 'error 💥 🙀:\n'
   ' - Message: $message\n'
   ' - Chunk: $chunk\n'
   ' - Attempts: $attempts';
@@ -55,7 +53,7 @@ GotipathStreamUploader GotipathStreamUploader = GotipathStreamUploader();
 
 
 
-GotipathStreamUploader.createUpload();
+gotipathStreamUploader.createUpload();
 ```
 
 ## API
@@ -64,7 +62,7 @@ Although the API is a port of the original JS library, some options and properti
 
 ### `createUpload()`
 
-Intializes the upload process. This method must be called after the `GotipathStreamUploader` instance is created and all event handlers are set.
+Intializes the upload process. This method must be called after the `GotipathUploader` instance is created and all event handlers are set.
 
 #### `GotipathStreamUploader` parameters:
 
