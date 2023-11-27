@@ -18,10 +18,10 @@ Add the following import to the `.dart` file that will use **UpChunk**
 ```dart
   // ADD ENDPOINT and credential HERE
 final String _endPoint = "https://apistream.gotipath.com/v1/";
-final String _clientID = 'f926cca1-ff63-4aa6-97e0-31ea7f0952ad';
-final String _libraryID = '7463b6ab-c36f-4e4e-bf43-41c84f0ac6e8';
-final String _apiKey = '9XyCA1Am23luZhT6VYLrWYevKOM3UKQhwnZ+5xwHKCSIIdEHRJVVzY+5854XMd5U/OxN3g';
-final String _videoID = '3d2e9180-f3b0-4291-adb3-bc1810446101';
+final String _clientID = 'f926cca1-ff63-4aa6-97e0-xxxxxxxxxx';
+final String _libraryID = '7463b6ab-c36f-4e4e-bf43-xxxxxxxx';
+final String _apiKey = '9XyCA1Am23luZhT6VYLrWYevKOM3UKQhwnZ+xxxxxxxxxx/OxN3g';
+final String _videoID = '3d2e9180-f3b0-4291-adb3-xxxxxxxx';
 
 GotipathStreamUploader GotipathStreamUploader = GotipathStreamUploader();
 
@@ -143,11 +143,7 @@ Intializes the upload process. This method must be called after the `GotipathStr
 
   Resumes an upload that was previously paused.
 
-- `restart()`
+- `cancel()`
 
-  Restarts the upload from chunk `0`, **use only if and after `onError` was fired**.
-
-- `stop()`
-
-  Cancels the upload abruptly. `restart()` can be used to start the upload from chunk `0`.
+  Cancels the upload abruptly.
 
