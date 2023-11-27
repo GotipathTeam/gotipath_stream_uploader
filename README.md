@@ -1,4 +1,4 @@
-# Gotipath Stream Uploader
+# Gotipath Stream Uploader (1.0.0)
 
 ## Installation
 
