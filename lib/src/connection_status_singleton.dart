@@ -72,7 +72,7 @@ class ConnectionStatusSingleton {
     if (previousConnection != hasConnection) {
       connectionChangeController.add(hasConnection);
     }
-    print("this is checkConnection result: $hasConnection");
+    print("checkConnection result: $hasConnection");
     return hasConnection;
   }
 }

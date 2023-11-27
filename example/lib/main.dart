@@ -83,7 +83,6 @@ class _MyHomePageState extends State<MyHomePage> {
           'name': fileToUpload.split('/').last,
         }),
       );
-      print("this is create video url ${jsonDecode(response.body)}");
       if (response.statusCode == 200) {
 
         return jsonDecode(response.body)['result']['id'];
@@ -92,7 +91,7 @@ class _MyHomePageState extends State<MyHomePage> {
         return "";
       }
     }catch(e){
-      print("this is video upload url error ${e}");
+      print("error ${e}");
       return "";
     }
 
@@ -196,10 +195,9 @@ class _MyHomePageState extends State<MyHomePage> {
             SizedBox(height: 30),
             InkWell(
               onTap: (){
-                // print("This is pause called");
                 // paused.value=true;
                 gotipathStreamUploader.pause();
-            //    print("This is pause status ${GotipathStreamUploader.paused}");
+
               },
               child: Container(
                 width: 200,

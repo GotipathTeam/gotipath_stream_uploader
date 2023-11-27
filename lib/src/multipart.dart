@@ -159,7 +159,6 @@ class GotipathStreamUploader {
   /// if the connection drops [_offline] is marked as true and upload us paused,
   /// if connection is restore [_offline] is marked as false and resumes the upload
   _connectionChanged(dynamic hasConnection) {
-    print("this is connection changed called");
     if (hasConnection) {
       if (!_offline)
         return;
@@ -182,10 +181,6 @@ class GotipathStreamUploader {
   Future<Response> _sendChunk(String presignedUrl,int chunkLenght) async {
 
     var putHeaders =  {"Accept":"*/*","Content-Length": chunkLenght, "Content-Type": "binary/octet-stream"};
-
-    print("this is video upload headers ${_chunkCount} ${putHeaders}");
-
-
 
     // if (_fileMimeType != null){
     //   putHeaders.putIfAbsent(Headers.contentTypeHeader, () => _fileMimeType!);
@@ -222,7 +217,6 @@ class GotipathStreamUploader {
       },
       cancelToken: _currentCancelToken,
     );
-    print("this is video upload response ${response}");
     // returns future with http response
     return response;
   }
@@ -267,7 +261,6 @@ class GotipathStreamUploader {
 
   /// Manages the whole upload by calling [_getChunk] and [_sendChunk]
   _sendChunks() async{
-    print("called send chunks $_paused");
     if (_paused || _offline || _stopped)
       return;
 
@@ -276,8 +269,6 @@ class GotipathStreamUploader {
      await  _getChunk();
      await _sendChunk(presigned_url,_chunkLength).then((res) async{
        if (successfulChunkUploadCodes.contains(res.statusCode)) {
-
-         print({"PartNumber":  _chunkCount+1, "ETag": res.headers.map['etag']!.toList().first});
          chunk_list.add({"PartNumber":  _chunkCount+1, "ETag": res.headers.map['etag']!.toList().first});
          _chunkCount++;
          if (_chunkCount < _totalChunks) {

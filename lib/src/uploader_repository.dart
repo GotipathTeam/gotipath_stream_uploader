@@ -92,7 +92,7 @@ Future<String> uploadUrlRequest(
       // throw new Exception(response.body);
     }
   }catch(e){
-    print("this is video upload url error ${e}");
+    print("error ${e}");
     return "";
   }
 
