@@ -7,7 +7,7 @@ Add the package to the `dependencies` section in `pubspec.yaml`:
 
 ## Usage
 
-Add the following import to the `.dart` file that will use **UpChunk**
+Add the following import to the `.dart` file that will use **gotipath_stream_uploader**
 
 `import 'package:gotipath_uploader/gotipath_uploader.dart';`
 
@@ -62,7 +62,7 @@ Although the API is a port of the original JS library, some options and properti
 
 ### `createUpload()`
 
-Intializes the upload process. This method must be called after the `GotipathUploader` instance is created and all event handlers are set.
+Initializes the upload process. This method must be called after the `GotipathUploader` instance is created and all event handlers are set.
 
 #### `GotipathUploader` parameters:
 
