@@ -39,7 +39,7 @@ GotipathUploader gotipathUploader = GotipathUploader();
   }
   ..onError = (String message, int chunk, int attempts) {
   setState(() {
-  _errorMessage = 'UpChunk error 💥 🙀:\n'
+  _errorMessage = 'error 💥 🙀:\n'
   ' - Message: $message\n'
   ' - Chunk: $chunk\n'
   ' - Attempts: $attempts';
@@ -57,8 +57,6 @@ gotipathUploader.createUpload();
 ```
 
 ## API
-
-Although the API is a port of the original JS library, some options and properties differ slightly.
 
 ### `createUpload()`
 
@@ -132,20 +130,13 @@ Initializes the upload process. This method must be called after the `GotipathUp
   Fired when the upload is finished successfully.
 
 ### GotipathUploader Instance Methods
-
 - `pause()`
 
   Pauses an upload after the current in-flight chunk is finished uploading.
 
 - `resume()`
-
   Resumes an upload that was previously paused.
 
-- `restart()`
-
-  Restarts the upload from chunk `0`, **use only if and after `onError` was fired**.
-
-- `stop()`
-
-  Cancels the upload abruptly. `restart()` can be used to start the upload from chunk `0`.
+- `abort()`
+  abort the multipart upload.
 
