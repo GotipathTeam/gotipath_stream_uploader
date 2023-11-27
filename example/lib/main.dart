@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:gotipath_stream_uploader/gotipath_uploader.dart';
+import 'package:gotipath_stream_uploader/gotipath_stream_uploader.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'credential.dart';
