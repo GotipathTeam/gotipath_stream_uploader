@@ -1,7 +1,6 @@
-name: gotipath_uploader
+name: gotipath_stream_uploader
 description: File Uploader for Gotipath
-version: 1.0.0
-author: Radee Jamil Khan <radee9999@gmail.com>
+version: 1.0.1
 homepage: https://github.com/GotipathTeam/gotipath_stream_uploader
 
 environment:

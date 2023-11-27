@@ -1,8 +1,11 @@
+import 'dart:convert';
 import 'dart:io';
-
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:gotipath_uploader/gotipath_uploader.dart';
+import 'package:gotipath_stream_uploader/gotipath_uploader.dart';
 import 'package:image_picker/image_picker.dart';
+
+import 'credential.dart';
 
 
 
@@ -35,11 +38,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   // ADD ENDPOINT URL HERE
-  final String _endPoint = "https://apistream.com/v1/";
-  final String _clientID = 'f926cca1-ff63-4aa6-97e0-31ea7f0952xx';
-  final String _libraryID = '7463b6ab-c36f-4e4e-bf43-41c84f0ac6xx';
-  final String _apiKey = '9XyCA1Am23luZhT6VYLrWYevKOM3UKQhwnZ+5xwHKCSIIdEHRJVVzY+5854Xxxx';
-  final String _videoID = '3d2e9180-f3b0-4291-adb3-bc1810446xx';
+
 
   final picker = ImagePicker();
 
@@ -48,9 +47,10 @@ class _MyHomePageState extends State<MyHomePage> {
   String _errorMessage = '';
 
   String fileToUpload = '';
-  GotipathUploader gotipathUploader = GotipathUploader();
+  GotipathStreamUploader gotipathStreamUploader = GotipathStreamUploader();
 
   void _getFile() async {
+    fileToUpload= '';
     final pickedFile = await picker.pickVideo(source: ImageSource.gallery);
 
     if (pickedFile == null) return;
@@ -59,7 +59,43 @@ class _MyHomePageState extends State<MyHomePage> {
       fileToUpload = pickedFile.path;
     });
 
+   final videoID=await createUploadUrlRequest(endPoint: endPoint,clientID: clientID,libraryID: libraryID,apiKey: apiKey);
+   videoId=videoID;
   //  _uploadFile(File(pickedFile.path));
+  }
+
+
+  Future<String> createUploadUrlRequest(
+      {String? endPoint,
+        String? clientID,
+        String? libraryID,
+        String? apiKey}
+      ) async {
+
+    final String url = endPoint! + 'libraries/$libraryID/videos';
+    final client = new http.Client();
+
+    try{
+      final response = await client.post(
+        Uri.parse(url),
+        headers: {'Accept': 'application/json', 'Content-type': 'application/json', "X-Auth-ClientId": clientID!, "X-Auth-LibraryId": libraryID!, "X-Auth-ApiKey": apiKey! },
+        body: jsonEncode(<String, String>{
+          'name': fileToUpload.split('/').last,
+        }),
+      );
+      print("this is create video url ${jsonDecode(response.body)}");
+      if (response.statusCode == 200) {
+
+        return jsonDecode(response.body)['result']['id'];
+
+      } else {
+        return "";
+      }
+    }catch(e){
+      print("this is video upload url error ${e}");
+      return "";
+    }
+
   }
 
   void _uploadFile(File fileToUpload) {
@@ -67,12 +103,12 @@ class _MyHomePageState extends State<MyHomePage> {
     _uploadComplete = false;
     _errorMessage = '';
 
-    gotipathUploader
-      ..endPoint = _endPoint
-      ..clientID = _clientID
-      ..libraryID = _libraryID
-      ..apiKey= _apiKey
-      ..videoID = _videoID
+    gotipathStreamUploader
+      ..endPoint = endPoint
+      ..clientID = clientID
+      ..libraryID = libraryID
+      ..apiKey= apiKey
+      ..videoID = videoId
       ..file = fileToUpload
       ..onProgress = (double progress) {
         setState(() {
@@ -95,7 +131,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
 
 
-    gotipathUploader.createUpload();
+    gotipathStreamUploader.createUpload();
   }
 
   @override
@@ -162,8 +198,8 @@ class _MyHomePageState extends State<MyHomePage> {
               onTap: (){
                 // print("This is pause called");
                 // paused.value=true;
-                gotipathUploader.pause();
-            //    print("This is pause status ${gotipathUploader.paused}");
+                gotipathStreamUploader.pause();
+            //    print("This is pause status ${GotipathStreamUploader.paused}");
               },
               child: Container(
                 width: 200,
@@ -185,8 +221,8 @@ class _MyHomePageState extends State<MyHomePage> {
             InkWell(
               onTap: (){
                 // paused.value=false;
-                 gotipathUploader.resume();
-              //  gotipathUploader.resume();
+                gotipathStreamUploader.resume();
+              //  GotipathStreamUploader.resume();
               },
               child: Container(
                 width: 200,
@@ -195,6 +231,30 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Center(
                   child: Text(
                     'Upload Resume',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.normal,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
+            SizedBox(height: 30),
+            InkWell(
+              onTap: (){
+                // paused.value=false;
+                gotipathStreamUploader.cancel();
+                //  GotipathStreamUploader.resume();
+              },
+              child: Container(
+                width: 200,
+                height: 50,
+                color: Colors.blue,
+                child: Center(
+                  child: Text(
+                    'Upload Cancel',
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.normal,

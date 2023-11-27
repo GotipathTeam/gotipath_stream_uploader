@@ -36,6 +36,33 @@ Future<http.Response> videoUploadComplete(
 }
 
 
+Future<http.Response> abortUpload(
+    {String? endPoint,
+      String? clientID,
+      String? libraryID,
+      String? apiKey,
+      String? upload_key,
+      String? upload_id}
+    ) async {
+
+  final String url = endPoint! + 'uploads/s3/multipart/$upload_id';
+  final client = new http.Client();
+
+
+
+  final response = await client.delete(
+    Uri.parse(url),
+    headers: {'Accept': 'application/json', 'Content-type': 'application/json', "X-Auth-ClientId": clientID!, "X-Auth-LibraryId": libraryID!, "X-Auth-ApiKey": apiKey! },
+  );
+
+  if (response.statusCode == 200) {
+    return response;
+  } else {
+
+    throw new Exception(response.body);
+  }
+}
+
 
 Future<String> uploadUrlRequest(
     {String? endPoint,

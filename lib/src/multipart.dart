@@ -7,7 +7,7 @@ import 'connection_status_singleton.dart';
 import 'uploader_repository.dart';
 
 
-class GotipathUploader {
+class GotipathStreamUploader {
   /// HTTP response codes implying the PUT method has been successful
   final successfulChunkUploadCodes = const [200, 201, 202, 204, 308];
 
@@ -64,7 +64,7 @@ class GotipathUploader {
   void Function()? onSuccess;
   void Function(double progress )? onProgress;
 
-  GotipathUploader();
+  GotipathStreamUploader();
 
    createUpload() => _internal();
 
@@ -110,10 +110,11 @@ class GotipathUploader {
     _sendChunks();
   }
 
-  stop() {
+  cancel() async{
     _stopped = true;
     _uploadFailed = true;
     _currentCancelToken!.cancel(Exception('Upload cancelled by the user'));
+    await abortUpload(endPoint: endPoint, clientID: clientID, libraryID: libraryID, apiKey: apiKey, upload_id: upload_id, upload_key: upload_key);
 
     if (onError != null)
       onError!(
@@ -329,20 +330,24 @@ class GotipathUploader {
   }
 
   /// Restarts the upload after if the upload failed and came to a complete stop
-  restart() {
-    if (!_uploadFailed)
-      throw Exception('Upload hasn\'t yet failed, please use restart only after all retries have failed.');
 
-    _chunkCount = 0;
-    chunkByteSize = chunkSize * 1024;
-    _attemptCount = 0;
-    _currentCancelToken = null;
+  // restart() {
+  //   if (!_uploadFailed)
+  //     throw Exception('Upload hasn\'t yet failed, please use restart only after all retries have failed.');
+  //
+  //   _chunkCount = 0;
+  //   chunkByteSize = chunkSize * 1024;
+  //   _attemptCount = 0;
+  //   _currentCancelToken = null;
+  //
+  //   _offline = false;
+  //   _paused = false;
+  //   _stopped = false;
+  //   _uploadFailed = false;
+  //
+  //   _sendChunks();
+  // }
 
-    _offline = false;
-    _paused = false;
-    _stopped = false;
-    _uploadFailed = false;
 
-    _sendChunks();
-  }
+
 }

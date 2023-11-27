@@ -5,13 +5,13 @@ Gotipath Uploader is a simple port of the JS library https://uppy.io
 ## Installation
 
 Add the package to the `dependencies` section in `pubspec.yaml`:
-- `gotipath_uploader: ^1.0.0` (or latest release)
+- `gotipath_stream_uploader: ^1.0.1` (or latest release)
 
 ## Usage
 
 Add the following import to the `.dart` file that will use **UpChunk**
 
-`import 'package:gotipath_uploader/gotipath_uploader.dart';`
+`import 'package:gotipath_stream_uploader/gotipath_stream_uploader.dart';`
 
 ### Example
 
@@ -23,11 +23,11 @@ final String _libraryID = '7463b6ab-c36f-4e4e-bf43-41c84f0ac6e8';
 final String _apiKey = '9XyCA1Am23luZhT6VYLrWYevKOM3UKQhwnZ+5xwHKCSIIdEHRJVVzY+5854XMd5U/OxN3g';
 final String _videoID = '3d2e9180-f3b0-4291-adb3-bc1810446101';
 
-GotipathUploader gotipathUploader = GotipathUploader();
+GotipathStreamUploader GotipathStreamUploader = GotipathStreamUploader();
 
 
 // Chunk upload
-  gotipathUploader
+  GotipathStreamUploader
   ..endPoint = _endPoint
   ..clientID = _clientID
   ..libraryID = _libraryID
@@ -55,7 +55,7 @@ GotipathUploader gotipathUploader = GotipathUploader();
 
 
 
-gotipathUploader.createUpload();
+GotipathStreamUploader.createUpload();
 ```
 
 ## API
@@ -64,9 +64,9 @@ Although the API is a port of the original JS library, some options and properti
 
 ### `createUpload()`
 
-Intializes the upload process. This method must be called after the `GotipathUploader` instance is created and all event handlers are set.
+Intializes the upload process. This method must be called after the `GotipathStreamUploader` instance is created and all event handlers are set.
 
-#### `GotipathUploader` parameters:
+#### `GotipathStreamUploader` parameters:
 
 ##### Upload options
 
@@ -133,7 +133,7 @@ Intializes the upload process. This method must be called after the `GotipathUpl
 
   Fired when the upload is finished successfully.
 
-### GotipathUploader Instance Methods
+### GotipathStreamUploader Instance Methods
 
 - `pause()`
 

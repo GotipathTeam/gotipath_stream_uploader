@@ -1,3 +1,3 @@
-library gotipath_uploader;
+library gotipath_stream_uploader;
 
-export 'src/up_chunk.dart';
+export 'src/multipart.dart';
