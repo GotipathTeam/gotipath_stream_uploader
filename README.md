@@ -7,7 +7,7 @@ Add the package to the `dependencies` section in `pubspec.yaml`:
 
 ## Usage
 
-Add the following import to the `.dart` file that will use **UpChunk**
+Add the following import to the `.dart` file that will use **GotipathStreamUploader**
 
 `import 'package:gotipath_stream_uploader/gotipath_stream_uploader.dart';`
 
@@ -16,10 +16,10 @@ Add the following import to the `.dart` file that will use **UpChunk**
 ```dart
   // ADD ENDPOINT and credential HERE
 final String _endPoint = "https://apistream.gotipath.com/v1/";
-final String _clientID = 'f926cca1-ff63-4aa6-97e0-xxxx';
-final String _libraryID = '7463b6ab-c36f-4e4e-bf43-xxxx';
-final String _apiKey = '9XyCA1Am23luZhT6VYLrWYevKOM3UKQhwnZ+5xwHKCSIIdEHRJVVzY+xxxx/OxN3g';
-final String _videoID = '3d2e9180-f3b0-4291-adb3-xxxxx';
+final String _clientID = 'Your client ID';
+final String _libraryID = 'Your library ID';
+final String _apiKey = 'Your API key';
+final String _videoID = 'Your video ID';
 
 GotipathStreamUploader gotipathStreamUploader = GotipathStreamUploader();
 
@@ -41,7 +41,7 @@ gotipathStreamUploader
   setState(() {
   _errorMessage = 'error 💥 🙀:\n'
   ' - Message: $message\n'
-  ' - Chunk: $chunk\n'
+  ' - part: $chunk\n'
   ' - Attempts: $attempts';
   });
   }
