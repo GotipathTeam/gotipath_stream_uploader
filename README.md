@@ -16,10 +16,10 @@ Add the following import to the `.dart` file that will use **UpChunk**
 ```dart
   // ADD ENDPOINT and credential HERE
 final String _endPoint = "https://apistream.gotipath.com/v1/";
-final String _clientID = 'f926cca1-ff63-4aa6-97e0-31ea7f0952ad';
-final String _libraryID = '7463b6ab-c36f-4e4e-bf43-41c84f0ac6e8';
-final String _apiKey = '9XyCA1Am23luZhT6VYLrWYevKOM3UKQhwnZ+5xwHKCSIIdEHRJVVzY+5854XMd5U/OxN3g';
-final String _videoID = '3d2e9180-f3b0-4291-adb3-bc1810446101';
+final String _clientID = 'f926cca1-ff63-4aa6-97e0-xxxx';
+final String _libraryID = '7463b6ab-c36f-4e4e-bf43-xxxx';
+final String _apiKey = '9XyCA1Am23luZhT6VYLrWYevKOM3UKQhwnZ+5xwHKCSIIdEHRJVVzY+xxxx/OxN3g';
+final String _videoID = '3d2e9180-f3b0-4291-adb3-xxxxx';
 
 GotipathStreamUploader gotipathStreamUploader = GotipathStreamUploader();
 
