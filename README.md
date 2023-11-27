@@ -24,7 +24,7 @@ final String _videoID = '3d2e9180-f3b0-4291-adb3-bcxx';
 GotipathUploader gotipathUploader = GotipathUploader();
 
 
-// Chunk upload
+// multipart upload
   gotipathUploader
   ..endPoint = _endPoint
   ..clientID = _clientID
