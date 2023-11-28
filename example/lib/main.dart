@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(title: 'UpChunk Demo'),
+      home: MyHomePage(title: 'Gotipath Stream Multipart'),
     );
   }
 }
